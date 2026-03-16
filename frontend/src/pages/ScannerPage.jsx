@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Mail, Link as LinkIcon, Terminal, AlertTriangle, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Mail, Link as LinkIcon, Terminal, AlertTriangle, ShieldCheck, AlertCircle, Activity, Shield } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
