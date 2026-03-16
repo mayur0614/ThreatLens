@@ -114,9 +114,9 @@ export default function ScannerPage() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Scanner Input Section */}
       <div className="glass-panel p-8 flex flex-col h-full ring-1 ring-white/5 hover:ring-cyber-blue/30 transition-all duration-500">
-        <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
-          <div className="p-2 bg-cyber-blue/10 rounded-lg text-cyber-blue">
-            <ShieldCheck size={24} />
+        <h2 className="text-3xl font-black mb-8 flex items-center gap-3 drop-shadow-[0_0_10px_rgba(0,180,216,0.3)]">
+          <div className="p-2 bg-cyber-blue/10 rounded-lg text-cyber-blue relative group-hover:shadow-[0_0_20px_rgba(0,180,216,0.5)] transition-shadow">
+            <ShieldCheck size={28} />
           </div>
           Threat Scanner
         </h2>
@@ -151,29 +151,44 @@ export default function ScannerPage() {
         <div className="flex-grow flex flex-col relative group">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-cyber-blue to-cyber-purple rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
           {activeTab === 'email' && (
-            <textarea
-              className="relative w-full h-48 bg-dark-800 border-none focus:ring-1 focus:ring-cyber-blue rounded-xl p-5 text-gray-100 placeholder-gray-600 focus:outline-none transition-all resize-none shadow-inner text-base"
-              placeholder="Paste suspicious email or message here..."
-              value={inputVal}
-              onChange={(e) => setInputVal(e.target.value)}
-            />
+            <div className="relative w-full h-48 group">
+               <textarea
+                 className="absolute inset-0 w-full h-full bg-dark-800/80 backdrop-blur-sm border border-white/5 focus:border-cyber-blue focus:ring-1 focus:ring-cyber-blue rounded-xl p-5 text-gray-100 placeholder-gray-500 focus:outline-none transition-all resize-none shadow-inner text-base font-mono z-10"
+                 placeholder="Paste suspicious email or message here..."
+                 value={inputVal}
+                 onChange={(e) => setInputVal(e.target.value)}
+               />
+               <div className="absolute inset-0 pointer-events-none rounded-xl overflow-hidden z-20">
+                 <div className="w-full h-1 bg-cyber-blue/20 blur-sm animate-scanline hidden group-focus-within:block"></div>
+               </div>
+            </div>
           )}
           {activeTab === 'url' && (
-             <input
-               type="text"
-               className="relative w-full bg-dark-800 border-none focus:ring-1 focus:ring-cyber-purple rounded-xl p-5 text-gray-100 placeholder-gray-600 focus:outline-none transition-all shadow-inner text-base"
-               placeholder="Enter a URL to analyze (e.g., http://paypal-secure-login-verification.com)..."
-               value={inputVal}
-               onChange={(e) => setInputVal(e.target.value)}
-             />
+            <div className="relative w-full group">
+               <input
+                 type="text"
+                 className="relative w-full bg-dark-800/80 backdrop-blur-sm border border-white/5 focus:border-cyber-purple focus:ring-1 focus:ring-cyber-purple rounded-xl p-5 text-gray-100 placeholder-gray-500 focus:outline-none transition-all shadow-inner text-base font-mono z-10"
+                 placeholder="Enter a URL to analyze (e.g., http://paypal-secure-login-verification.com)..."
+                 value={inputVal}
+                 onChange={(e) => setInputVal(e.target.value)}
+               />
+               <div className="absolute inset-0 pointer-events-none rounded-xl overflow-hidden z-20">
+                 <div className="w-full h-1 bg-cyber-purple/20 blur-sm animate-scanline hidden group-focus-within:block"></div>
+               </div>
+            </div>
           )}
           {activeTab === 'prompt' && (
-             <textarea
-               className="relative w-full h-48 bg-dark-800 border-none focus:ring-1 focus:ring-cyber-green rounded-xl p-5 text-gray-100 placeholder-gray-600 focus:outline-none transition-all resize-none shadow-inner text-base"
-               placeholder="Paste AI prompt to check for prompt injection..."
-               value={inputVal}
-               onChange={(e) => setInputVal(e.target.value)}
-             />
+            <div className="relative w-full h-48 group">
+               <textarea
+                 className="absolute inset-0 w-full h-full bg-dark-800/80 backdrop-blur-sm border border-white/5 focus:border-cyber-green focus:ring-1 focus:ring-cyber-green rounded-xl p-5 text-gray-100 placeholder-gray-500 focus:outline-none transition-all resize-none shadow-inner text-base font-mono z-10"
+                 placeholder="Paste AI prompt to check for prompt injection..."
+                 value={inputVal}
+                 onChange={(e) => setInputVal(e.target.value)}
+               />
+               <div className="absolute inset-0 pointer-events-none rounded-xl overflow-hidden z-20">
+                 <div className="w-full h-1 bg-cyber-green/20 blur-sm animate-scanline hidden group-focus-within:block"></div>
+               </div>
+            </div>
           )}
 
           <button
@@ -204,21 +219,24 @@ export default function ScannerPage() {
       </div>
 
       {/* Results Panel */}
-      <div className="glass-panel p-8 flex flex-col h-full min-h-[600px] ring-1 ring-white/5">
-        <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
-          <div className="p-2 bg-white/5 rounded-lg text-gray-300">
+      <div className="glass-panel p-8 flex flex-col h-full min-h-[600px] ring-1 ring-white/5 relative overflow-hidden">
+        {/* Cyber grid background layer for the panel */}
+        <div className="absolute inset-0 bg-cyber-grid pointer-events-none opacity-20 Mix-blend-overlay z-0"></div>
+
+        <h2 className="text-2xl font-bold mb-8 flex items-center gap-3 relative z-10">
+          <div className="p-2 bg-white/5 rounded-lg text-gray-300 backdrop-blur-sm border border-white/5">
             <Activity size={24} />
           </div>
           Analysis Results
         </h2>
         
         {!result && !loading && (
-          <div className="flex-grow flex flex-col items-center justify-center text-gray-600 animate-fade-in">
+          <div className="flex-grow flex flex-col items-center justify-center text-gray-600 animate-fade-in relative z-10">
             <div className="relative mb-6 group cursor-default">
               <div className="absolute inset-0 bg-cyber-blue/20 blur-2xl rounded-full scale-110 group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
-              <ShieldCheck size={80} className="relative z-10 opacity-40 group-hover:opacity-60 transition-opacity duration-500" />
+              <ShieldCheck size={80} className="relative z-10 opacity-30 group-hover:opacity-50 transition-opacity duration-500 animate-float" />
             </div>
-            <p className="text-lg tracking-wide">Awaiting threat payload</p>
+            <p className="text-lg tracking-widest uppercase text-gray-500 font-bold opacity-70">Awaiting threat payload</p>
           </div>
         )}
 
@@ -235,11 +253,12 @@ export default function ScannerPage() {
         )}
 
         {result && !loading && (
-          <div className="flex-grow flex flex-col animate-fade-in-up">
+          <div className="flex-grow flex flex-col animate-fade-in-up relative z-10">
             {/* Top Stats */}
-            <div className="flex items-center justify-between bg-dark-900/40 p-6 rounded-2xl mb-8 border border-white/5 shadow-inner backdrop-blur-sm relative overflow-hidden group">
+            <div className="flex items-center justify-between bg-dark-900/40 p-6 rounded-2xl mb-8 border border-white/5 shadow-inner backdrop-blur-md relative overflow-hidden group">
+              <div className="absolute inset-0 bg-cyber-blue/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-cyber-blue to-cyber-purple"></div>
-              <div className="flex items-center gap-5 ml-4">
+              <div className="flex items-center gap-5 ml-4 relative z-10">
                 <div className="p-3 bg-dark-800 rounded-xl shadow-glass border border-white/5">
                   {getRiskIcon(result.risk_level)}
                 </div>
