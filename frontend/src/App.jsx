@@ -87,7 +87,7 @@ function App() {
           <footer className="py-8 text-center text-sm text-gray-500 border-t border-white/5 bg-dark-900/50 backdrop-blur-md relative z-10 mt-auto">
             <div className="w-full h-px absolute top-0 left-0 bg-gradient-to-r from-transparent via-cyber-blue/50 to-transparent"></div>
             <p className="flex items-center justify-center gap-2">
-              <span className="text-cyber-green animate-pulse-glow">●</span> System Online | © 2026 ThreatLens Security Analytics
+              <span className="text-cyber-green animate-pulse-glow">●</span> System Online | Trio kkwieeer
             </p>
           </footer>
         </div>

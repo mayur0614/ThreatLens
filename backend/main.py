@@ -37,7 +37,14 @@ class ScanPromptRequest(BaseModel):
 @app.post("/scan_email")
 async def scan_email(req: ScanEmailRequest):
     prob = phishing_model.predict_proba(req.text)
-    indicators = explainer.explain_phishing(req.text)
+    
+    # Use Explainable AI directly from the ML model's feature weights if it's suspicious
+    if prob > 0.4:
+        indicators = phishing_model.get_explanation(req.text)
+        if not indicators:
+            indicators = explainer.explain_phishing(req.text)
+    else:
+        indicators = explainer.explain_phishing(req.text)
     risk_score = RiskEngine.calculate_risk_score(prob, indicators, "phishing")
     risk_level = RiskEngine.get_risk_level(risk_score)
     recommended_actions = [
