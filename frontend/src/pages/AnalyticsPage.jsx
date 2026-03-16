@@ -27,25 +27,42 @@ ChartJS.register(
   Legend
 );
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 export default function AnalyticsPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [retraining, setRetraining] = useState(false);
+
+  const fetchAnalytics = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/analytics`);
+      setData(res.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        const res = await axios.get(`${API_BASE_URL}/analytics`);
-        setData(res.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchAnalytics();
   }, []);
+
+  const handleRetrain = async () => {
+    if (!window.confirm('Trigger model retraining with new feedback data?')) return;
+    setRetraining(true);
+    try {
+      await axios.post(`${API_BASE_URL}/retrain`);
+      alert('Model retraining complete! Intelligence upgraded.');
+      fetchAnalytics();
+    } catch (err) {
+      console.error(err);
+      alert('Error during retraining.');
+    } finally {
+      setRetraining(false);
+    }
+  };
 
   if (loading) {
     return <div className="p-8 text-center text-cyber-blue">Loading Analytics Data...</div>;
@@ -107,6 +124,18 @@ export default function AnalyticsPage() {
           </div>
           Threat Analytics Dashboard
         </h2>
+        <button
+          onClick={handleRetrain}
+          disabled={retraining}
+          className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all duration-300 ${
+            retraining 
+              ? 'bg-dark-700 text-gray-500 cursor-not-allowed' 
+              : 'bg-cyber-blue/10 text-cyber-blue border border-cyber-blue/30 hover:bg-cyber-blue/20 hover:shadow-[0_0_15px_rgba(0,180,216,0.2)]'
+          }`}
+        >
+          <div className={`w-2 h-2 rounded-full ${retraining ? 'bg-gray-500 animate-spin' : 'bg-cyber-blue animate-pulse'}`}></div>
+          {retraining ? 'Retraining...' : 'Retrain Intelligence'}
+        </button>
       </div>
       
       {/* Top Stat Cards */}

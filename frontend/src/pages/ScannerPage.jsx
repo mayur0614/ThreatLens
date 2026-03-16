@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Mail, Link as LinkIcon, Terminal, AlertTriangle, ShieldCheck, AlertCircle, Activity, Shield } from 'lucide-react';
+import { Mail, Link as LinkIcon, Terminal, AlertTriangle, ShieldCheck, AlertCircle, Activity, Shield, Cpu } from 'lucide-react';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 function RiskGauge({ score }) {
   const getRiskColor = (s) => {
@@ -79,7 +79,11 @@ export default function ScannerPage() {
     }
 
     try {
-      const res = await axios.post(`${API_BASE_URL}${endpoint}`, payload);
+      // Run API call and a minimum display time for the loader in parallel
+      const [res] = await Promise.all([
+        axios.post(`${API_BASE_URL}${endpoint}`, payload),
+        new Promise(resolve => setTimeout(resolve, 1800)) // Always show loader for at least 1.8s
+      ]);
       setResult(res.data);
     } catch (err) {
       console.error(err);
@@ -221,7 +225,7 @@ export default function ScannerPage() {
       {/* Results Panel */}
       <div className="glass-panel p-8 flex flex-col h-full min-h-[600px] ring-1 ring-white/5 relative overflow-hidden">
         {/* Cyber grid background layer for the panel */}
-        <div className="absolute inset-0 bg-cyber-grid pointer-events-none opacity-20 Mix-blend-overlay z-0"></div>
+        <div className="absolute inset-0 bg-cyber-grid pointer-events-none opacity-20 mix-blend-overlay z-0"></div>
 
         <h2 className="text-2xl font-bold mb-8 flex items-center gap-3 relative z-10">
           <div className="p-2 bg-white/5 rounded-lg text-gray-300 backdrop-blur-sm border border-white/5">
@@ -241,14 +245,44 @@ export default function ScannerPage() {
         )}
 
         {loading && (
-          <div className="flex-grow flex flex-col items-center justify-center text-cyber-blue animate-fade-in">
-            <div className="relative w-24 h-24 mb-6">
-              <div className="absolute inset-0 border-2 border-cyber-blue/20 rounded-full animate-ping"></div>
-              <div className="absolute inset-2 border-4 border-cyber-blue/40 border-t-cyber-blue rounded-full animate-spin"></div>
-              <div className="absolute inset-6 border-4 border-cyber-purple/40 border-b-cyber-purple rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
-              <Shield className="absolute inset-0 m-auto w-8 h-8 text-cyber-blue animate-pulse" />
+          <div className="flex-grow flex flex-col items-center justify-center animate-fade-in relative z-10">
+            {/* Outer pulsing ring */}
+            <div className="relative w-36 h-36 mb-8">
+              <div className="absolute inset-0 border-2 border-cyber-blue/10 rounded-full animate-ping" style={{ animationDuration: '2s' }}></div>
+              <div className="absolute inset-0 border border-cyber-blue/20 rounded-full animate-ping" style={{ animationDuration: '2.7s', animationDelay: '0.5s' }}></div>
+
+              {/* Spinning rings */}
+              <div className="absolute inset-4 border-[3px] border-transparent border-t-cyber-blue rounded-full animate-spin" style={{ animationDuration: '0.9s' }}></div>
+              <div className="absolute inset-8 border-[3px] border-transparent border-b-cyber-purple rounded-full animate-spin" style={{ animationDuration: '1.3s', animationDirection: 'reverse' }}></div>
+
+              {/* Center icon */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-cyber-blue/30 blur-xl rounded-full"></div>
+                  <Cpu className="relative w-10 h-10 text-cyber-blue animate-pulse drop-shadow-[0_0_10px_rgba(0,180,216,0.8)]" />
+                </div>
+              </div>
             </div>
-            <p className="text-lg font-medium tracking-wide animate-pulse-glow">Processing via ThreatLens AI Engine...</p>
+
+            {/* Animated status text */}
+            <p className="text-lg font-black tracking-widest uppercase text-cyber-blue mb-2 drop-shadow-[0_0_10px_rgba(0,180,216,0.5)]">Scanning...</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-gray-500 font-bold mb-8">ThreatLens ML Engine</p>
+
+            {/* Animated step indicators */}
+            <div className="flex flex-col gap-3 w-64">
+              {[
+                'Vectorizing input text',
+                'Running TF-IDF + Logistic Regression',
+                'Computing threat probability',
+                'Generating XAI explanation',
+              ].map((step, i) => (
+                <div key={i} className="flex items-center gap-3 text-xs text-gray-500" style={{ animation: `fadeIn 0.5s ease-out ${i * 0.35}s both` }}>
+                  <div className="w-2 h-2 rounded-full bg-cyber-blue/50 animate-pulse flex-shrink-0" style={{ animationDelay: `${i * 0.25}s` }}></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-cyber-blue/50 to-transparent"></div>
+                  <span className="tracking-wider">{step}</span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
