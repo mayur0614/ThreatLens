@@ -163,6 +163,10 @@ def train_and_save(samples: list[tuple[str, int]]):
     print("\n[*] Training complete! Restart your FastAPI server to load the new model.")
 
 
-if __name__ == "__main__":
+def run_training():
+    """Main entry point to download data and retrain the phishing model."""
     samples = download_dataset()
     train_and_save(samples)
+
+if __name__ == "__main__":
+    run_training()

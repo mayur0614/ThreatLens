@@ -9,6 +9,7 @@ from models.url_model import URLModel
 from models.prompt_detector import PromptDetector
 from models.risk_engine import RiskEngine
 from models.explainer import Explainer
+from train_model import run_training
 
 app = FastAPI(title="ThreatLens AI API")
 
@@ -111,7 +112,15 @@ async def scan_url(req: ScanUrlRequest):
 @app.post("/scan_prompt")
 async def scan_prompt(req: ScanPromptRequest):
     prob = prompt_detector.predict_proba(req.prompt)
-    indicators = explainer.explain_prompt(req.prompt)
+
+    # Use the ML model's XAI explanation for suspicious prompts
+    if prob > 0.4:
+        indicators = prompt_detector.get_explanation(req.prompt)
+        if not indicators:
+            indicators = explainer.explain_prompt(req.prompt)
+    else:
+        indicators = explainer.explain_prompt(req.prompt)
+
     risk_score = RiskEngine.calculate_risk_score(prob, indicators, "prompt_injection")
     risk_level = RiskEngine.get_risk_level(risk_score)
     recommended_actions = [
@@ -162,3 +171,37 @@ async def get_analytics():
         "average_risk_score": int(avg_score),
         "recent_history": [log_scan_helper(s) for s in reversed(scans[-20:])]
     }
+
+class FeedbackRequest(BaseModel):
+    scan_id: str
+    label: int # 1 for threat, 0 for safe
+
+@app.post("/feedback")
+async def provide_feedback(req: FeedbackRequest):
+    from bson import ObjectId
+    result = await scan_collection.update_one(
+        {"_id": ObjectId(req.scan_id)},
+        {"$set": {"manual_label": req.label}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Scan not found")
+    return {"status": "success", "message": "Feedback recorded"}
+
+@app.post("/retrain")
+async def retrain_models():
+    try:
+        # 1. Retrain Phishing Model (from external script logic)
+        run_training()
+        phishing_model.load_model()
+        
+        # 2. Retrain Prompt Model (with DB feedback)
+        cursor = scan_collection.find({"input_type": "prompt", "manual_label": {"$exists": True}})
+        feedback_data = []
+        async for doc in cursor:
+            feedback_data.append((doc["input_text"], doc["manual_label"]))
+            
+        prompt_detector.retrain(extra_data=feedback_data)
+        
+        return {"status": "success", "message": f"Models retrained. Prompt detector learned from {len(feedback_data)} new samples."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

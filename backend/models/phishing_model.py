@@ -11,15 +11,19 @@ CLASSIFIER_PATH = os.path.join(_MODEL_DIR, "phishing_classifier.pkl")
 
 class PhishingModel:
     def __init__(self):
+        self.load_model()
+
+    def load_model(self):
+        """Load or reload model artifacts from disk."""
         if os.path.exists(VECTORIZER_PATH) and os.path.exists(CLASSIFIER_PATH):
             # Load the real pre-trained model trained on the SMS Spam Collection Dataset
-            print("[PhishingModel] Loading pre-trained TF-IDF + Logistic Regression model from disk...")
+            print(f"[PhishingModel] Loading model from {CLASSIFIER_PATH}...")
             with open(VECTORIZER_PATH, "rb") as f:
                 self.vectorizer = pickle.load(f)
             with open(CLASSIFIER_PATH, "rb") as f:
                 self.clf = pickle.load(f)
             self._is_ml_model = True
-            print("[PhishingModel] ✓ Pre-trained model loaded successfully.")
+            print("[PhishingModel] ✓ Model loaded successfully.")
         else:
             # Fallback: small synthetic in-memory model if pkl files don't exist
             print("[PhishingModel] WARNING: Pre-trained model not found, using in-memory fallback.")
