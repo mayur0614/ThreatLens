@@ -1,37 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-[#0a0a0a] text-gray-100;
+    @apply bg-dark-900 text-gray-100 font-sans selection:bg-cyber-blue selection:text-white min-h-screen relative;
+    /* Create a subtle animated radial gradient background */
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(0, 180, 216, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 85% 30%, rgba(123, 44, 191, 0.05) 0%, transparent 50%);
+    background-attachment: fixed;
   }
 }
 
 .glass-panel {
-  @apply bg-[#141414]/80 backdrop-blur-md border border-[#2b2b2b] rounded-xl shadow-lg;
+  @apply bg-dark-800/60 backdrop-blur-xl border border-white/5 rounded-2xl shadow-glass transform transition-all duration-300 relative overflow-hidden;
 }
 
-/* Custom Scrollbar for dark theme */
+/* Subtle inner glow for glass panels */
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.02);
+  pointer-events: none;
+}
+
+/* Custom slick dark scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: theme('colors.dark.900');
 }
 ::-webkit-scrollbar-thumb {
-  background: #2b2b2b;
-  border-radius: 4px;
+  background: theme('colors.dark.700');
+  border-radius: 9999px;
+  border: 2px solid theme('colors.dark.900');
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f3f;
+  background: theme('colors.dark.600');
 }
 
-@keyframes pulse-glow {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
-}
-.animate-pulse-glow {
-  animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+/* Base utility animation classes not in tailwind config */
+.glass-nav {
+  @apply bg-dark-900/80 backdrop-blur-xl border-b border-white/5 shadow-md;
 }

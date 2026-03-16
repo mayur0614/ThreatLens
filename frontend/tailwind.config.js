@@ -6,17 +6,53 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['"Space Grotesk"', 'sans-serif'],
+      },
       colors: {
         dark: {
-          900: '#0a0a0a',
-          800: '#141414',
-          700: '#1f1f1f',
-          600: '#2b2b2b',
+          900: '#050505',
+          800: '#0a0a0a',
+          700: '#111111',
+          600: '#1a1a1a',
         },
         cyber: {
-          green: '#00ff41',
-          blue: '#00f0ff',
-          red: '#ff003c',
+          light: '#e0f7fa',
+          green: '#00e676',
+          blue: '#00b4d8',
+          purple: '#7b2cbf',
+          red: '#ff0054',
+        }
+      },
+      boxShadow: {
+        'glow-blue': '0 0 15px rgba(0, 180, 216, 0.5)',
+        'glow-red': '0 0 15px rgba(255, 0, 84, 0.5)',
+        'glow-green': '0 0 15px rgba(0, 230, 118, 0.5)',
+        'glow-purple': '0 0 15px rgba(123, 44, 191, 0.5)',
+        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-out forwards',
+        'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
+        'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'float': 'float 6s ease-in-out infinite',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        pulseGlow: {
+          '0%, 100%': { opacity: '1', transform: 'scale(1)', boxShadow: '0 0 15px rgba(0, 180, 216, 0.2)' },
+          '50%': { opacity: '0.9', transform: 'scale(1.02)', boxShadow: '0 0 25px rgba(0, 180, 216, 0.6)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
         }
       }
     },

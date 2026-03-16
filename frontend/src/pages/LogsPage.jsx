@@ -31,59 +31,66 @@ export default function LogsPage() {
   if (loading) return <div className="p-8 text-center text-cyber-blue">Loading Logs...</div>;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between border-b border-[#2b2b2b] pb-4">
-        <h2 className="text-3xl font-bold flex items-center gap-3">
-          <Database className="text-cyber-blue" size={32} /> Incident Logs
+    <div className="space-y-8 animate-fade-in-up">
+      <div className="flex items-center justify-between border-b border-white/5 pb-6">
+        <h2 className="text-3xl font-black tracking-tight flex items-center gap-4">
+          <div className="p-3 bg-cyber-blue/10 rounded-xl text-cyber-blue">
+            <Database size={28} />
+          </div>
+          Incident Logs
         </h2>
-        <span className="bg-[#1f1f1f] text-gray-300 px-3 py-1 rounded border border-[#2b2b2b] text-sm">
+        <span className="bg-dark-800 text-gray-300 px-4 py-2 rounded-lg border border-white/5 text-sm font-medium shadow-inner flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-cyber-blue animate-pulse"></div>
           Showing last 20 events
         </span>
       </div>
 
-      <div className="glass-panel overflow-hidden">
+      <div className="glass-panel overflow-hidden border border-white/5 shadow-glass">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[#1f1f1f] border-b border-[#2b2b2b]">
-                <th className="p-4 text-xs tracking-wider text-gray-400 uppercase font-semibold">Timestamp</th>
-                <th className="p-4 text-xs tracking-wider text-gray-400 uppercase font-semibold">Type</th>
-                <th className="p-4 text-xs tracking-wider text-gray-400 uppercase font-semibold">Snippet</th>
-                <th className="p-4 text-xs tracking-wider text-gray-400 uppercase font-semibold">Indicators</th>
-                <th className="p-4 text-xs tracking-wider text-gray-400 uppercase font-semibold">Risk Score</th>
+              <tr className="bg-dark-900/80 border-b border-white/5">
+                <th className="p-5 text-xs tracking-widest text-gray-500 uppercase font-bold">Timestamp</th>
+                <th className="p-5 text-xs tracking-widest text-gray-500 uppercase font-bold">Type</th>
+                <th className="p-5 text-xs tracking-widest text-gray-500 uppercase font-bold">Snippet</th>
+                <th className="p-5 text-xs tracking-widest text-gray-500 uppercase font-bold">Indicators</th>
+                <th className="p-5 text-xs tracking-widest text-gray-500 uppercase font-bold">Risk Score</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#2b2b2b]">
+            <tbody className="divide-y divide-white/5">
               {logs.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="p-8 text-center text-gray-500">
-                    No scans recorded yet.
+                  <td colSpan="5" className="p-12 text-center text-gray-500">
+                    <div className="flex flex-col items-center justify-center gap-4">
+                      <ShieldCheck size={48} className="opacity-20" />
+                      <span>No scans recorded yet.</span>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 logs.map((log) => (
-                  <tr key={log.id} className="hover:bg-[#141414] transition-colors">
-                    <td className="p-4 text-sm text-gray-300 whitespace-nowrap">
+                  <tr key={log.id} className="hover:bg-white/5 transition-colors group">
+                    <td className="p-5 text-sm text-gray-400 whitespace-nowrap font-mono">
                       {new Date(log.timestamp).toLocaleString()}
                     </td>
-                    <td className="p-4 text-sm font-medium text-white">
+                    <td className="p-5 text-sm font-bold text-gray-200">
                       {log.threat_type}
                     </td>
-                    <td className="p-4 text-sm text-gray-400 max-w-xs truncate" title={log.input_text}>
+                    <td className="p-5 text-sm text-gray-400 max-w-xs truncate group-hover:text-gray-300 transition-colors" title={log.input_text}>
                       {log.input_text.substring(0, 50)}...
                     </td>
-                    <td className="p-4 text-sm text-gray-300">
-                      <div className="flex gap-1 flex-wrap">
+                    <td className="p-5 text-sm text-gray-400">
+                      <div className="flex gap-2 flex-wrap">
                         {log.explanation && log.explanation.length > 0 ? (
                           log.explanation.slice(0, 2).map((ind, i) => (
-                            <span key={i} className="bg-[#2b2b2b] text-xs px-2 py-0.5 rounded" title={ind}>{ind.split(' ')[0]}...</span>
+                            <span key={i} className="bg-dark-900 border border-white/10 text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded" title={ind}>{ind.split(' ')[0]}...</span>
                           ))
                         ) : (
-                          <span className="text-gray-500">-</span>
+                          <span className="text-gray-600">-</span>
                         )}
                       </div>
                     </td>
-                    <td className="p-4 whitespace-nowrap">
+                    <td className="p-5 whitespace-nowrap">
                       {getRiskMarkup(log.risk_score)}
                     </td>
                   </tr>

@@ -16,7 +16,10 @@ function RiskGauge({ score }) {
 
   return (
     <div className="relative w-32 h-32 flex items-center justify-center">
-      <svg className="transform -rotate-90 w-32 h-32">
+      <div className={`absolute inset-0 rounded-full blur-xl opacity-20 transition-colors duration-1000 ${
+        score < 40 ? 'bg-cyber-green' : score < 70 ? 'bg-yellow-500' : 'bg-cyber-red'
+      }`}></div>
+      <svg className="transform -rotate-90 w-32 h-32 relative z-10">
         <circle
           cx="64"
           cy="64"
@@ -24,7 +27,7 @@ function RiskGauge({ score }) {
           stroke="currentColor"
           strokeWidth="8"
           fill="transparent"
-          className="text-[#2b2b2b]"
+          className="text-dark-700"
         />
         <circle
           cx="64"
@@ -35,12 +38,12 @@ function RiskGauge({ score }) {
           fill="transparent"
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
-          className={`transition-all duration-1000 ease-out ${getRiskColor(score)}`}
+          className={`transition-all duration-1000 ease-out drop-shadow-[0_0_8px_currentColor] ${getRiskColor(score)}`}
         />
       </svg>
-      <div className="absolute flex flex-col items-center justify-center">
-        <span className={`text-2xl font-bold ${getRiskColor(score)}`}>{score}</span>
-        <span className="text-xs text-gray-400">Risk Score</span>
+      <div className="absolute flex flex-col items-center justify-center z-20">
+        <span className={`text-3xl font-bold tracking-tighter drop-shadow-md ${getRiskColor(score)}`}>{score}</span>
+        <span className="text-[10px] uppercase font-bold tracking-wider text-gray-500">Risk Score</span>
       </div>
     </div>
   );
@@ -110,36 +113,46 @@ export default function ScannerPage() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Scanner Input Section */}
-      <div className="glass-panel p-6 flex flex-col h-full">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+      <div className="glass-panel p-8 flex flex-col h-full ring-1 ring-white/5 hover:ring-cyber-blue/30 transition-all duration-500">
+        <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
+          <div className="p-2 bg-cyber-blue/10 rounded-lg text-cyber-blue">
+            <ShieldCheck size={24} />
+          </div>
           Threat Scanner
         </h2>
         
-        <div className="flex bg-[#1f1f1f] rounded-lg p-1 mb-6">
+        <div className="flex bg-dark-900/50 p-1 mb-8 rounded-xl border border-white/5 backdrop-blur-md relative overflow-hidden">
           <button
-            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md transition-all ${activeTab === 'email' ? 'bg-[#2b2b2b] text-white shadow' : 'text-gray-400 hover:text-white'}`}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg transition-all duration-300 relative z-10 ${activeTab === 'email' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
             onClick={() => { setActiveTab('email'); setInputVal(''); setResult(null); }}
           >
-            <Mail size={16} /> Email / Message
+            {activeTab === 'email' && <div className="absolute inset-0 bg-dark-700 rounded-lg shadow-lg border border-white/10 -z-10 animate-fade-in"></div>}
+            <Mail size={18} className={activeTab === 'email' ? 'text-cyber-blue' : ''} /> 
+            <span className="font-medium">Email / Message</span>
           </button>
           <button
-            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md transition-all ${activeTab === 'url' ? 'bg-[#2b2b2b] text-white shadow' : 'text-gray-400 hover:text-white'}`}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg transition-all duration-300 relative z-10 ${activeTab === 'url' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
             onClick={() => { setActiveTab('url'); setInputVal(''); setResult(null); }}
           >
-            <LinkIcon size={16} /> URL Link
+            {activeTab === 'url' && <div className="absolute inset-0 bg-dark-700 rounded-lg shadow-lg border border-white/10 -z-10 animate-fade-in"></div>}
+            <LinkIcon size={18} className={activeTab === 'url' ? 'text-cyber-purple' : ''} /> 
+            <span className="font-medium">URL Link</span>
           </button>
           <button
-            className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md transition-all ${activeTab === 'prompt' ? 'bg-[#2b2b2b] text-white shadow' : 'text-gray-400 hover:text-white'}`}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg transition-all duration-300 relative z-10 ${activeTab === 'prompt' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
             onClick={() => { setActiveTab('prompt'); setInputVal(''); setResult(null); }}
           >
-            <Terminal size={16} /> AI Prompt
+            {activeTab === 'prompt' && <div className="absolute inset-0 bg-dark-700 rounded-lg shadow-lg border border-white/10 -z-10 animate-fade-in"></div>}
+            <Terminal size={18} className={activeTab === 'prompt' ? 'text-cyber-green' : ''} /> 
+            <span className="font-medium">AI Prompt</span>
           </button>
         </div>
 
-        <div className="flex-grow flex flex-col">
+        <div className="flex-grow flex flex-col relative group">
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-cyber-blue to-cyber-purple rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
           {activeTab === 'email' && (
             <textarea
-              className="w-full h-48 bg-[#141414] border border-[#2b2b2b] focus:border-cyber-blue rounded-lg p-4 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-cyber-blue transition-all"
+              className="relative w-full h-48 bg-dark-800 border-none focus:ring-1 focus:ring-cyber-blue rounded-xl p-5 text-gray-100 placeholder-gray-600 focus:outline-none transition-all resize-none shadow-inner text-base"
               placeholder="Paste suspicious email or message here..."
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
@@ -148,7 +161,7 @@ export default function ScannerPage() {
           {activeTab === 'url' && (
              <input
                type="text"
-               className="w-full bg-[#141414] border border-[#2b2b2b] focus:border-cyber-blue rounded-lg p-4 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-cyber-blue transition-all"
+               className="relative w-full bg-dark-800 border-none focus:ring-1 focus:ring-cyber-purple rounded-xl p-5 text-gray-100 placeholder-gray-600 focus:outline-none transition-all shadow-inner text-base"
                placeholder="Enter a URL to analyze (e.g., http://paypal-secure-login-verification.com)..."
                value={inputVal}
                onChange={(e) => setInputVal(e.target.value)}
@@ -156,7 +169,7 @@ export default function ScannerPage() {
           )}
           {activeTab === 'prompt' && (
              <textarea
-               className="w-full h-48 bg-[#141414] border border-[#2b2b2b] focus:border-cyber-blue rounded-lg p-4 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-cyber-blue transition-all"
+               className="relative w-full h-48 bg-dark-800 border-none focus:ring-1 focus:ring-cyber-green rounded-xl p-5 text-gray-100 placeholder-gray-600 focus:outline-none transition-all resize-none shadow-inner text-base"
                placeholder="Paste AI prompt to check for prompt injection..."
                value={inputVal}
                onChange={(e) => setInputVal(e.target.value)}
@@ -166,82 +179,121 @@ export default function ScannerPage() {
           <button
             onClick={handleScan}
             disabled={loading || !inputVal.trim()}
-            className={`mt-6 w-full py-3 rounded-lg font-bold text-white transition-all ${
+            className={`mt-8 w-full py-4 rounded-xl font-bold tracking-wide text-white transition-all duration-300 relative overflow-hidden group ${
               loading || !inputVal.trim() 
-                ? 'bg-[#2b2b2b] cursor-not-allowed opacity-50' 
-                : 'bg-gradient-to-r from-cyber-blue/80 to-[#00a2ff]/80 hover:from-cyber-blue hover:to-[#00a2ff] shadow-[0_0_15px_rgba(0,240,255,0.3)] hover:shadow-[0_0_25px_rgba(0,240,255,0.5)]'
+                ? 'bg-dark-700 text-gray-500 cursor-not-allowed border border-white/5 opacity-70' 
+                : 'bg-gradient-to-r from-cyber-blue to-cyber-purple shadow-glow-blue hover:shadow-glow-purple hover:scale-[1.02] transform'
             }`}
           >
-            {loading ? 'Analyzing...' : `Analyze ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}
+            {(!loading && inputVal.trim()) && (
+              <div className="absolute inset-0 bg-white/20 translate-y-[100%] group-hover:translate-y-[0%] transition-transform duration-300 ease-in-out"></div>
+            )}
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              {loading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Analyzing...
+                </>
+              ) : `Analyze ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}
+            </span>
           </button>
         </div>
       </div>
 
       {/* Results Panel */}
-      <div className="glass-panel p-6 flex flex-col h-full min-h-[500px]">
-        <h2 className="text-2xl font-bold mb-6">Analysis Results</h2>
+      <div className="glass-panel p-8 flex flex-col h-full min-h-[600px] ring-1 ring-white/5">
+        <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
+          <div className="p-2 bg-white/5 rounded-lg text-gray-300">
+            <Activity size={24} />
+          </div>
+          Analysis Results
+        </h2>
         
         {!result && !loading && (
-          <div className="flex-grow flex flex-col items-center justify-center text-gray-500">
-            <ShieldCheck size={64} className="mb-4 opacity-20" />
-            <p>Submit content for AI analysis</p>
+          <div className="flex-grow flex flex-col items-center justify-center text-gray-600 animate-fade-in">
+            <div className="relative mb-6 group cursor-default">
+              <div className="absolute inset-0 bg-cyber-blue/20 blur-2xl rounded-full scale-110 group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
+              <ShieldCheck size={80} className="relative z-10 opacity-40 group-hover:opacity-60 transition-opacity duration-500" />
+            </div>
+            <p className="text-lg tracking-wide">Awaiting threat payload</p>
           </div>
         )}
 
         {loading && (
-          <div className="flex-grow flex flex-col items-center justify-center text-cyber-blue">
-            <div className="w-12 h-12 border-4 border-cyber-blue border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="animate-pulse">Processing with ThreatLens AI Engine...</p>
+          <div className="flex-grow flex flex-col items-center justify-center text-cyber-blue animate-fade-in">
+            <div className="relative w-24 h-24 mb-6">
+              <div className="absolute inset-0 border-2 border-cyber-blue/20 rounded-full animate-ping"></div>
+              <div className="absolute inset-2 border-4 border-cyber-blue/40 border-t-cyber-blue rounded-full animate-spin"></div>
+              <div className="absolute inset-6 border-4 border-cyber-purple/40 border-b-cyber-purple rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+              <Shield className="absolute inset-0 m-auto w-8 h-8 text-cyber-blue animate-pulse" />
+            </div>
+            <p className="text-lg font-medium tracking-wide animate-pulse-glow">Processing via ThreatLens AI Engine...</p>
           </div>
         )}
 
         {result && !loading && (
-          <div className="flex-grow flex flex-col animate-[fadeIn_0.5s_ease-out]">
+          <div className="flex-grow flex flex-col animate-fade-in-up">
             {/* Top Stats */}
-            <div className="flex items-center justify-between bg-[#1f1f1f] p-4 rounded-lg mb-6 border border-[#2b2b2b]">
-              <div className="flex items-center gap-4">
-                {getRiskIcon(result.risk_level)}
+            <div className="flex items-center justify-between bg-dark-900/40 p-6 rounded-2xl mb-8 border border-white/5 shadow-inner backdrop-blur-sm relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-cyber-blue to-cyber-purple"></div>
+              <div className="flex items-center gap-5 ml-4">
+                <div className="p-3 bg-dark-800 rounded-xl shadow-glass border border-white/5">
+                  {getRiskIcon(result.risk_level)}
+                </div>
                 <div>
-                  <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                  <h3 className="text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
                     {result.threat_type}
                   </h3>
-                  <p className="text-sm text-gray-400">Confidence: {result.confidence_level}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-cyber-blue animate-pulse"></div>
+                    <p className="text-xs uppercase tracking-widest text-gray-400 font-bold">Confidence: <span className="text-gray-200">{result.confidence_level}</span></p>
+                  </div>
                 </div>
               </div>
               <RiskGauge score={result.risk_score} />
             </div>
 
             {/* Explainable AI Section */}
-            <div className="mb-6">
-              <h4 className="text-lg font-bold mb-3 border-b border-[#2b2b2b] pb-2 text-cyber-blue">Why this is flagged</h4>
+            <div className="mb-6 bg-dark-900/30 rounded-2xl p-6 border border-white/5">
+              <h4 className="text-sm uppercase tracking-widest font-bold mb-4 flex items-center gap-2 text-cyber-blue">
+                <AlertCircle size={16} /> Why this is flagged
+              </h4>
               {result.explanation.length > 0 ? (
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {result.explanation.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-gray-300">
-                      <AlertTriangle size={16} className="text-yellow-500 mt-1 flex-shrink-0" />
-                      <span>{item}</span>
+                    <li key={idx} className="flex items-start gap-3 text-gray-300 bg-dark-800/50 p-3 rounded-lg border border-white/5 hover:border-cyber-blue/30 transition-colors">
+                      <AlertTriangle size={16} className="text-yellow-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm leading-relaxed">{item}</span>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-gray-400 italic">No specific suspicious indicators found.</p>
+                <p className="text-gray-500 italic text-sm p-4 bg-dark-800/30 rounded-lg">No specific suspicious indicators found.</p>
               )}
             </div>
 
-            <div className="mb-6">
-              <h4 className="text-sm font-bold text-gray-400 mb-2">Original Content Snippet</h4>
-              <div className="bg-[#141414] p-3 rounded border border-[#2b2b2b] text-sm text-gray-300 font-mono overflow-auto max-h-32">
+            <div className="mb-8 bg-dark-900/30 rounded-2xl p-6 border border-white/5">
+              <h4 className="text-sm uppercase tracking-widest font-bold mb-4 text-gray-500">Original Content Snippet</h4>
+              <div className="bg-dark-900 p-4 rounded-xl border border-white/5 text-sm text-gray-400 font-mono overflow-auto max-h-40 leading-relaxed custom-scrollbar shadow-inner selection:bg-cyber-red/30">
                 {highlightText(inputVal, result.explanation)}
               </div>
             </div>
 
             {/* Recommended Action */}
-            <div className="mt-auto">
-              <h4 className="text-lg font-bold mb-3 border-b border-[#2b2b2b] pb-2 text-cyber-green">What You Should Do Next</h4>
-              <ul className="grid grid-cols-1 gap-2">
+            <div className="mt-auto bg-cyber-green/5 rounded-2xl p-6 border border-cyber-green/10 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-cyber-green/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
+              <h4 className="text-sm uppercase tracking-widest font-bold mb-4 text-cyber-green flex items-center gap-2">
+                <ShieldCheck size={16} /> What You Should Do Next
+              </h4>
+              <ul className="grid grid-cols-1 gap-3 relative z-10">
                 {result.recommended_actions.map((action, idx) => (
-                  <li key={idx} className="bg-[#1f1f1f] border border-[#2b2b2b] p-3 rounded-md flex items-center gap-3 shadow-sm">
-                    <div className="w-2 h-2 rounded-full bg-cyber-green"></div>
+                  <li key={idx} className="bg-dark-900/80 backdrop-blur border border-cyber-green/20 p-4 rounded-xl flex items-center gap-4 hover:bg-cyber-green/10 hover:border-cyber-green/40 transition-all duration-300">
+                    <div className="w-8 h-8 rounded-full bg-cyber-green/20 flex items-center justify-center flex-shrink-0">
+                      <div className="w-2.5 h-2.5 rounded-full bg-cyber-green shadow-glow-green"></div>
+                    </div>
                     <span className="text-gray-200 text-sm font-medium">{action}</span>
                   </li>
                 ))}

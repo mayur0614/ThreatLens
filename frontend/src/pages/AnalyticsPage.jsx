@@ -99,59 +99,68 @@ export default function AnalyticsPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <h2 className="text-3xl font-bold flex items-center gap-3">
-        <Activity className="text-cyber-blue" size={32} /> Thread Analytics Dashboard
-      </h2>
+    <div className="space-y-8 animate-fade-in-up">
+      <div className="flex items-center justify-between border-b border-white/5 pb-6">
+        <h2 className="text-3xl font-black tracking-tight flex items-center gap-4">
+          <div className="p-3 bg-cyber-purple/10 rounded-xl text-cyber-purple">
+            <Activity size={28} />
+          </div>
+          Threat Analytics Dashboard
+        </h2>
+      </div>
       
       {/* Top Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="glass-panel p-6 flex flex-col justify-center items-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-cyber-blue/10 rounded-bl-full"></div>
-          <span className="text-gray-400 font-medium mb-1">Total Scans</span>
-          <span className="text-4xl font-black text-white">{data.total_scans}</span>
+        <div className="glass-panel p-6 flex flex-col justify-center items-center relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-cyber-blue/10 rounded-bl-full group-hover:scale-110 transition-transform duration-500"></div>
+          <span className="text-xs uppercase tracking-widest font-bold text-gray-400 mb-2 relative z-10">Total Scans</span>
+          <span className="text-5xl font-black text-white drop-shadow-md relative z-10">{data.total_scans}</span>
         </div>
         
-        <div className="glass-panel p-6 flex flex-col justify-center items-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-red-500/10 rounded-bl-full"></div>
-          <span className="text-gray-400 font-medium mb-1 flex items-center gap-2">
-            <ShieldAlert size={16} /> Threats Detected
+        <div className="glass-panel p-6 flex flex-col justify-center items-center relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-cyber-red/10 rounded-bl-full group-hover:scale-110 transition-transform duration-500"></div>
+          <span className="text-xs uppercase tracking-widest font-bold text-gray-400 mb-2 flex items-center gap-2 relative z-10">
+            <ShieldAlert size={14} className="text-cyber-red" /> Threats Detected
           </span>
-          <span className="text-4xl font-black text-cyber-red">
+          <span className="text-5xl font-black text-cyber-red drop-shadow-[0_0_10px_rgba(255,0,84,0.3)] relative z-10">
             {data.detections.phishing + data.detections.url + data.detections.prompt}
           </span>
         </div>
 
-        <div className="glass-panel p-6 flex flex-col justify-center items-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-yellow-500/10 rounded-bl-full"></div>
-          <span className="text-gray-400 font-medium mb-1 flex items-center gap-2">
-            <Target size={16} /> Avg Risk Score
+        <div className="glass-panel p-6 flex flex-col justify-center items-center relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/10 rounded-bl-full group-hover:scale-110 transition-transform duration-500"></div>
+          <span className="text-xs uppercase tracking-widest font-bold text-gray-400 mb-2 flex items-center gap-2 relative z-10">
+            <Target size={14} className="text-yellow-500" /> Avg Risk Score
           </span>
-          <span className={`text-4xl font-black ${data.average_risk_score > 60 ? 'text-cyber-red' : 'text-yellow-500'}`}>
+          <span className={`text-5xl font-black relative z-10 ${data.average_risk_score > 60 ? 'text-cyber-red drop-shadow-[0_0_10px_rgba(255,0,84,0.3)]' : 'text-yellow-500 drop-shadow-[0_0_10px_rgba(234,179,8,0.3)]'}`}>
             {data.average_risk_score}
           </span>
         </div>
         
-        <div className="glass-panel p-6 flex flex-col justify-center items-center">
-            <span className="text-gray-400 font-medium mb-1 flex items-center gap-2">
-            <Info size={16} /> Status
+        <div className="glass-panel p-6 flex flex-col justify-center items-center border border-cyber-green/20 bg-cyber-green/5 relative overflow-hidden">
+            <div className="absolute inset-0 bg-cyber-green/10 blur-xl"></div>
+            <span className="text-xs uppercase tracking-widest font-bold text-gray-400 mb-2 flex items-center gap-2 relative z-10">
+              <Info size={14} /> Status
             </span>
-            <span className="text-2xl font-bold text-cyber-green mt-2">ACTIVE</span>
-            <span className="text-xs text-gray-500 mt-1">Engine Online</span>
+            <span className="text-3xl font-black text-cyber-green mt-1 drop-shadow-md relative z-10">ACTIVE</span>
+            <span className="text-xs tracking-wide text-cyber-green/70 mt-2 font-mono flex items-center gap-2 relative z-10">
+              <div className="w-1.5 h-1.5 bg-cyber-green rounded-full animate-pulse-glow"></div>
+              Engine Online
+            </span>
         </div>
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="glass-panel p-6">
-          <h3 className="text-xl font-bold mb-6 text-gray-200">Threat Distribution</h3>
+        <div className="glass-panel p-8">
+          <h3 className="text-lg font-bold tracking-wide mb-8 text-gray-200 border-b border-white/5 pb-4">Threat Distribution</h3>
           <div className="h-64 relative">
              <Doughnut data={doughnutData} options={{...chartOptions, scales:{}, maintainAspectRatio: false}} />
           </div>
         </div>
         
-        <div className="glass-panel p-6">
-          <h3 className="text-xl font-bold mb-6 text-gray-200">Processing Volume (7 Days)</h3>
+        <div className="glass-panel p-8">
+          <h3 className="text-lg font-bold tracking-wide mb-8 text-gray-200 border-b border-white/5 pb-4">Processing Volume (7 Days)</h3>
           <div className="h-64">
               <Bar data={threatTrendsData} options={chartOptions} />
           </div>
