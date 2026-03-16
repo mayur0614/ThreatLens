@@ -1,0 +1,13 @@
+# Node modules
+node_modules/
+dist/
+
+# Python Virtual Environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables
+.env
