@@ -19,13 +19,13 @@ function Navbar() {
     <nav className="sticky top-0 z-50 glass-nav">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-2 group cursor-pointer">
-            <div className="relative">
-              <div className="absolute inset-0 bg-cyber-blue blur-md opacity-30 group-hover:opacity-60 transition-opacity"></div>
-              <Shield className="text-cyber-blue relative z-10" size={28} />
+          <div className="flex items-center gap-3 group cursor-pointer relative">
+            <div className="absolute -inset-2 bg-cyber-blue/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative p-2 bg-dark-800 rounded-xl border border-white/10 shadow-glow-blue group-hover:scale-110 transition-transform duration-300">
+              <Shield className="text-cyber-blue" size={24} />
             </div>
-            <span className="font-bold text-xl tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-cyber-blue to-cyber-purple drop-shadow-sm group-hover:drop-shadow-[0_0_10px_rgba(0,180,216,0.5)] transition-all">
-              ThreatLens AI
+            <span className="font-black text-2xl tracking-tighter uppercase bg-clip-text text-transparent bg-gradient-to-r from-white via-cyber-light to-cyber-blue drop-shadow-[0_0_15px_rgba(0,180,216,0.8)] group-hover:drop-shadow-[0_0_25px_rgba(0,180,216,1)] transition-all">
+              THREATLENS
             </span>
           </div>
           <div className="flex space-x-2">
@@ -64,18 +64,33 @@ function Navbar() {
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-[#0a0a0a] text-gray-100 flex flex-col font-sans">
-        <Navbar />
-        <main className="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
-          <Routes>
-            <Route path="/" element={<ScannerPage />} />
-            <Route path="/analytics" element={<AnalyticsPage />} />
-            <Route path="/logs" element={<LogsPage />} />
-          </Routes>
-        </main>
-        <footer className="py-6 text-center text-sm text-gray-500 border-t border-[#1f1f1f]">
-          <p>© 2026 ThreatLens AI. All rights reserved.</p>
-        </footer>
+      <div className="min-h-screen bg-dark-900 text-gray-100 flex flex-col font-sans relative overflow-hidden">
+        {/* Futuristic animated background elements */}
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyber-blue/10 rounded-full blur-[120px] mix-blend-screen animate-float"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyber-purple/10 rounded-full blur-[120px] mix-blend-screen animate-float" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-[40%] left-[60%] w-[20%] h-[20%] bg-cyber-green/5 rounded-full blur-[100px] mix-blend-screen animate-pulse-glow"></div>
+        </div>
+
+        <div className="relative z-10 flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 relative">
+            {/* Grid overlay */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDM5LjVoNDBWNDBoLTQweiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAyKSIvPjxwYXRoIGQ9Ik0zOS41IDB2NDBoMC41VjB6IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDIpIi8+PC9zdmc+')] pointer-events-none opacity-50 z-[-1]"></div>
+            
+            <Routes>
+              <Route path="/" element={<ScannerPage />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="/logs" element={<LogsPage />} />
+            </Routes>
+          </main>
+          <footer className="py-8 text-center text-sm text-gray-500 border-t border-white/5 bg-dark-900/50 backdrop-blur-md relative z-10 mt-auto">
+            <div className="w-full h-px absolute top-0 left-0 bg-gradient-to-r from-transparent via-cyber-blue/50 to-transparent"></div>
+            <p className="flex items-center justify-center gap-2">
+              <span className="text-cyber-green animate-pulse-glow">●</span> System Online | Trio kkwieeer
+            </p>
+          </footer>
+        </div>
       </div>
     </Router>
   );

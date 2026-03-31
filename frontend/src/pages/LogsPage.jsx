@@ -2,25 +2,41 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Database, AlertTriangle, ShieldCheck } from 'lucide-react';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 export default function LogsPage() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(null);
+
+  const fetchLogs = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/analytics`);
+      setLogs(res.data.recent_history || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const res = await axios.get(`${API_BASE_URL}/analytics`);
-        setLogs(res.data.recent_history || []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchLogs();
   }, []);
+
+  const handleFeedback = async (scanId, label) => {
+    setSubmitting(scanId);
+    try {
+      await axios.post(`${API_BASE_URL}/feedback`, { scan_id: scanId, label });
+      alert('Intelligence feedback recorded!');
+      fetchLogs();
+    } catch (err) {
+      console.error(err);
+      alert('Error recording feedback.');
+    } finally {
+      setSubmitting(null);
+    }
+  };
 
   const getRiskMarkup = (score) => {
     if (score < 40) return <span className="bg-cyber-green/20 text-cyber-green px-2 py-1 rounded text-xs font-bold border border-cyber-green/50">Safe ({score})</span>;
@@ -55,12 +71,13 @@ export default function LogsPage() {
                 <th className="p-5 text-xs tracking-widest text-gray-500 uppercase font-bold">Snippet</th>
                 <th className="p-5 text-xs tracking-widest text-gray-500 uppercase font-bold">Indicators</th>
                 <th className="p-5 text-xs tracking-widest text-gray-500 uppercase font-bold">Risk Score</th>
+                <th className="p-5 text-xs tracking-widest text-gray-500 uppercase font-bold text-center">Intelligence Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {logs.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="p-12 text-center text-gray-500">
+                  <td colSpan="6" className="p-12 text-center text-gray-500">
                     <div className="flex flex-col items-center justify-center gap-4">
                       <ShieldCheck size={48} className="opacity-20" />
                       <span>No scans recorded yet.</span>
@@ -92,6 +109,26 @@ export default function LogsPage() {
                     </td>
                     <td className="p-5 whitespace-nowrap">
                       {getRiskMarkup(log.risk_score)}
+                    </td>
+                    <td className="p-5">
+                      <div className="flex items-center justify-center gap-2">
+                        <button 
+                          onClick={() => handleFeedback(log.id, 1)}
+                          disabled={submitting === log.id}
+                          className="p-2 bg-cyber-red/10 text-cyber-red rounded-lg border border-cyber-red/20 hover:bg-cyber-red/20 transition-all group-hover:shadow-[0_0_10px_rgba(255,0,84,0.2)]"
+                          title="Confirm as Threat"
+                        >
+                          <AlertTriangle size={16} />
+                        </button>
+                        <button 
+                          onClick={() => handleFeedback(log.id, 0)}
+                          disabled={submitting === log.id}
+                          className="p-2 bg-cyber-green/10 text-cyber-green rounded-lg border border-cyber-green/20 hover:bg-cyber-green/20 transition-all group-hover:shadow-[0_0_10px_rgba(0,255,65,0.2)]"
+                          title="Mark as Safe"
+                        >
+                          <ShieldCheck size={16} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

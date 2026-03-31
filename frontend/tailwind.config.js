@@ -53,7 +53,20 @@ export default {
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-10px)' },
+        },
+        scanline: {
+          '0%': { transform: 'translateY(-100%)' },
+          '100%': { transform: 'translateY(100%)' },
+        },
+        glitch: {
+          '0%, 100%': { transform: 'translate(0)' },
+          '33%': { transform: 'translate(-2px, 2px)' },
+          '66%': { transform: 'translate(2px, -2px)' },
         }
+      },
+      backgroundImage: {
+        'cyber-grid': "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDM5LjVoNDBWNDBoLTQweiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAyKSIvPjxwYXRoIGQ9Ik0zOS41IDB2NDBoMC41VjB6IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDIpIi8+PC9zdmc+')",
+        'cyber-gradient': 'linear-gradient(135deg, rgba(0,180,216,0.1) 0%, rgba(123,44,191,0.1) 100%)',
       }
     },
   },

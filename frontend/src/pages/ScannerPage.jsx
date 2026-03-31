@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Mail, Link as LinkIcon, Terminal, AlertTriangle, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Mail, Link as LinkIcon, Terminal, AlertTriangle, ShieldCheck, AlertCircle, Activity, Shield, Cpu } from 'lucide-react';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 function RiskGauge({ score }) {
   const getRiskColor = (s) => {
@@ -79,7 +79,11 @@ export default function ScannerPage() {
     }
 
     try {
-      const res = await axios.post(`${API_BASE_URL}${endpoint}`, payload);
+      // Run API call and a minimum display time for the loader in parallel
+      const [res] = await Promise.all([
+        axios.post(`${API_BASE_URL}${endpoint}`, payload),
+        new Promise(resolve => setTimeout(resolve, 1800)) // Always show loader for at least 1.8s
+      ]);
       setResult(res.data);
     } catch (err) {
       console.error(err);
@@ -114,9 +118,9 @@ export default function ScannerPage() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Scanner Input Section */}
       <div className="glass-panel p-8 flex flex-col h-full ring-1 ring-white/5 hover:ring-cyber-blue/30 transition-all duration-500">
-        <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
-          <div className="p-2 bg-cyber-blue/10 rounded-lg text-cyber-blue">
-            <ShieldCheck size={24} />
+        <h2 className="text-3xl font-black mb-8 flex items-center gap-3 drop-shadow-[0_0_10px_rgba(0,180,216,0.3)]">
+          <div className="p-2 bg-cyber-blue/10 rounded-lg text-cyber-blue relative group-hover:shadow-[0_0_20px_rgba(0,180,216,0.5)] transition-shadow">
+            <ShieldCheck size={28} />
           </div>
           Threat Scanner
         </h2>
@@ -151,29 +155,44 @@ export default function ScannerPage() {
         <div className="flex-grow flex flex-col relative group">
           <div className="absolute -inset-0.5 bg-gradient-to-r from-cyber-blue to-cyber-purple rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
           {activeTab === 'email' && (
-            <textarea
-              className="relative w-full h-48 bg-dark-800 border-none focus:ring-1 focus:ring-cyber-blue rounded-xl p-5 text-gray-100 placeholder-gray-600 focus:outline-none transition-all resize-none shadow-inner text-base"
-              placeholder="Paste suspicious email or message here..."
-              value={inputVal}
-              onChange={(e) => setInputVal(e.target.value)}
-            />
+            <div className="relative w-full h-48 group">
+               <textarea
+                 className="absolute inset-0 w-full h-full bg-dark-800/80 backdrop-blur-sm border border-white/5 focus:border-cyber-blue focus:ring-1 focus:ring-cyber-blue rounded-xl p-5 text-gray-100 placeholder-gray-500 focus:outline-none transition-all resize-none shadow-inner text-base font-mono z-10"
+                 placeholder="Paste suspicious email or message here..."
+                 value={inputVal}
+                 onChange={(e) => setInputVal(e.target.value)}
+               />
+               <div className="absolute inset-0 pointer-events-none rounded-xl overflow-hidden z-20">
+                 <div className="w-full h-1 bg-cyber-blue/20 blur-sm animate-scanline hidden group-focus-within:block"></div>
+               </div>
+            </div>
           )}
           {activeTab === 'url' && (
-             <input
-               type="text"
-               className="relative w-full bg-dark-800 border-none focus:ring-1 focus:ring-cyber-purple rounded-xl p-5 text-gray-100 placeholder-gray-600 focus:outline-none transition-all shadow-inner text-base"
-               placeholder="Enter a URL to analyze (e.g., http://paypal-secure-login-verification.com)..."
-               value={inputVal}
-               onChange={(e) => setInputVal(e.target.value)}
-             />
+            <div className="relative w-full group">
+               <input
+                 type="text"
+                 className="relative w-full bg-dark-800/80 backdrop-blur-sm border border-white/5 focus:border-cyber-purple focus:ring-1 focus:ring-cyber-purple rounded-xl p-5 text-gray-100 placeholder-gray-500 focus:outline-none transition-all shadow-inner text-base font-mono z-10"
+                 placeholder="Enter a URL to analyze (e.g., http://paypal-secure-login-verification.com)..."
+                 value={inputVal}
+                 onChange={(e) => setInputVal(e.target.value)}
+               />
+               <div className="absolute inset-0 pointer-events-none rounded-xl overflow-hidden z-20">
+                 <div className="w-full h-1 bg-cyber-purple/20 blur-sm animate-scanline hidden group-focus-within:block"></div>
+               </div>
+            </div>
           )}
           {activeTab === 'prompt' && (
-             <textarea
-               className="relative w-full h-48 bg-dark-800 border-none focus:ring-1 focus:ring-cyber-green rounded-xl p-5 text-gray-100 placeholder-gray-600 focus:outline-none transition-all resize-none shadow-inner text-base"
-               placeholder="Paste AI prompt to check for prompt injection..."
-               value={inputVal}
-               onChange={(e) => setInputVal(e.target.value)}
-             />
+            <div className="relative w-full h-48 group">
+               <textarea
+                 className="absolute inset-0 w-full h-full bg-dark-800/80 backdrop-blur-sm border border-white/5 focus:border-cyber-green focus:ring-1 focus:ring-cyber-green rounded-xl p-5 text-gray-100 placeholder-gray-500 focus:outline-none transition-all resize-none shadow-inner text-base font-mono z-10"
+                 placeholder="Paste AI prompt to check for prompt injection..."
+                 value={inputVal}
+                 onChange={(e) => setInputVal(e.target.value)}
+               />
+               <div className="absolute inset-0 pointer-events-none rounded-xl overflow-hidden z-20">
+                 <div className="w-full h-1 bg-cyber-green/20 blur-sm animate-scanline hidden group-focus-within:block"></div>
+               </div>
+            </div>
           )}
 
           <button
@@ -204,42 +223,76 @@ export default function ScannerPage() {
       </div>
 
       {/* Results Panel */}
-      <div className="glass-panel p-8 flex flex-col h-full min-h-[600px] ring-1 ring-white/5">
-        <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
-          <div className="p-2 bg-white/5 rounded-lg text-gray-300">
+      <div className="glass-panel p-8 flex flex-col h-full min-h-[600px] ring-1 ring-white/5 relative overflow-hidden">
+        {/* Cyber grid background layer for the panel */}
+        <div className="absolute inset-0 bg-cyber-grid pointer-events-none opacity-20 mix-blend-overlay z-0"></div>
+
+        <h2 className="text-2xl font-bold mb-8 flex items-center gap-3 relative z-10">
+          <div className="p-2 bg-white/5 rounded-lg text-gray-300 backdrop-blur-sm border border-white/5">
             <Activity size={24} />
           </div>
           Analysis Results
         </h2>
         
         {!result && !loading && (
-          <div className="flex-grow flex flex-col items-center justify-center text-gray-600 animate-fade-in">
+          <div className="flex-grow flex flex-col items-center justify-center text-gray-600 animate-fade-in relative z-10">
             <div className="relative mb-6 group cursor-default">
               <div className="absolute inset-0 bg-cyber-blue/20 blur-2xl rounded-full scale-110 group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
-              <ShieldCheck size={80} className="relative z-10 opacity-40 group-hover:opacity-60 transition-opacity duration-500" />
+              <ShieldCheck size={80} className="relative z-10 opacity-30 group-hover:opacity-50 transition-opacity duration-500 animate-float" />
             </div>
-            <p className="text-lg tracking-wide">Awaiting threat payload</p>
+            <p className="text-lg tracking-widest uppercase text-gray-500 font-bold opacity-70">Awaiting threat payload</p>
           </div>
         )}
 
         {loading && (
-          <div className="flex-grow flex flex-col items-center justify-center text-cyber-blue animate-fade-in">
-            <div className="relative w-24 h-24 mb-6">
-              <div className="absolute inset-0 border-2 border-cyber-blue/20 rounded-full animate-ping"></div>
-              <div className="absolute inset-2 border-4 border-cyber-blue/40 border-t-cyber-blue rounded-full animate-spin"></div>
-              <div className="absolute inset-6 border-4 border-cyber-purple/40 border-b-cyber-purple rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
-              <Shield className="absolute inset-0 m-auto w-8 h-8 text-cyber-blue animate-pulse" />
+          <div className="flex-grow flex flex-col items-center justify-center animate-fade-in relative z-10">
+            {/* Outer pulsing ring */}
+            <div className="relative w-36 h-36 mb-8">
+              <div className="absolute inset-0 border-2 border-cyber-blue/10 rounded-full animate-ping" style={{ animationDuration: '2s' }}></div>
+              <div className="absolute inset-0 border border-cyber-blue/20 rounded-full animate-ping" style={{ animationDuration: '2.7s', animationDelay: '0.5s' }}></div>
+
+              {/* Spinning rings */}
+              <div className="absolute inset-4 border-[3px] border-transparent border-t-cyber-blue rounded-full animate-spin" style={{ animationDuration: '0.9s' }}></div>
+              <div className="absolute inset-8 border-[3px] border-transparent border-b-cyber-purple rounded-full animate-spin" style={{ animationDuration: '1.3s', animationDirection: 'reverse' }}></div>
+
+              {/* Center icon */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-cyber-blue/30 blur-xl rounded-full"></div>
+                  <Cpu className="relative w-10 h-10 text-cyber-blue animate-pulse drop-shadow-[0_0_10px_rgba(0,180,216,0.8)]" />
+                </div>
+              </div>
             </div>
-            <p className="text-lg font-medium tracking-wide animate-pulse-glow">Processing via ThreatLens AI Engine...</p>
+
+            {/* Animated status text */}
+            <p className="text-lg font-black tracking-widest uppercase text-cyber-blue mb-2 drop-shadow-[0_0_10px_rgba(0,180,216,0.5)]">Scanning...</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-gray-500 font-bold mb-8">ThreatLens ML Engine</p>
+
+            {/* Animated step indicators */}
+            <div className="flex flex-col gap-3 w-64">
+              {[
+                'Vectorizing input text',
+                'Running TF-IDF + Logistic Regression',
+                'Computing threat probability',
+                'Generating XAI explanation',
+              ].map((step, i) => (
+                <div key={i} className="flex items-center gap-3 text-xs text-gray-500" style={{ animation: `fadeIn 0.5s ease-out ${i * 0.35}s both` }}>
+                  <div className="w-2 h-2 rounded-full bg-cyber-blue/50 animate-pulse flex-shrink-0" style={{ animationDelay: `${i * 0.25}s` }}></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-cyber-blue/50 to-transparent"></div>
+                  <span className="tracking-wider">{step}</span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
         {result && !loading && (
-          <div className="flex-grow flex flex-col animate-fade-in-up">
+          <div className="flex-grow flex flex-col animate-fade-in-up relative z-10">
             {/* Top Stats */}
-            <div className="flex items-center justify-between bg-dark-900/40 p-6 rounded-2xl mb-8 border border-white/5 shadow-inner backdrop-blur-sm relative overflow-hidden group">
+            <div className="flex items-center justify-between bg-dark-900/40 p-6 rounded-2xl mb-8 border border-white/5 shadow-inner backdrop-blur-md relative overflow-hidden group">
+              <div className="absolute inset-0 bg-cyber-blue/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-cyber-blue to-cyber-purple"></div>
-              <div className="flex items-center gap-5 ml-4">
+              <div className="flex items-center gap-5 ml-4 relative z-10">
                 <div className="p-3 bg-dark-800 rounded-xl shadow-glass border border-white/5">
                   {getRiskIcon(result.risk_level)}
                 </div>
